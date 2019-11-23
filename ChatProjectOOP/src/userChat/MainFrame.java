@@ -20,11 +20,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.text.html.HTMLDocument;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
@@ -32,20 +39,18 @@ import javax.swing.text.html.HTMLDocument;
  */
 public class MainFrame {
 
+    ArrayList<String> arrayTXT = new ArrayList<String>();
     ArrayList<JTextArea> arrayTA = new ArrayList<JTextArea>();
     JFrame frm = new JFrame("Work");
     JPanel pnel, pnelR, pnelL, pnelF;
     JTextArea ar, ar1, ar2, ar3, ar4, ar5;
     JButton btn;
-    private int num = 7;
-    private String txt1 = "Test Topic";
-    private String txt3 = "Test Topic\n";
-    private String txt4 = "Test Topic\n";
-    private String txt5 = "Test Topic\n";
-    private String txt6 = "Test Topic";
-    private String txt2 = "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    private String temp, txt, temp2, temp3;
+    private int num;
+    private String txtD, txtM, txtY, txtTopic, txtContent;
 
     public void draw() {
+        show();
         btn = new JButton("Add Work");
         pnel = new JPanel();
         pnelR = new JPanel();
@@ -63,23 +68,64 @@ public class MainFrame {
         pnel.repaint();
         pnel.setLayout(new GridLayout(num, 1, 10, 20));
         pnel.setBackground(Color.DARK_GRAY);
-        
-        
-        for (int i = 0; i < num; i++) {
+
+        for (int j = 0; j < num; j++) {
+            String Arrtxt = arrayTXT.get(j);
+            try {
+
+                JSONArray data = new JSONArray(Arrtxt);
+
+                ArrayList<HashMap<String, String>> myArrList = new ArrayList<HashMap<String, String>>();
+
+                HashMap<String, String> map;
+
+                for (int i = 0; i < data.length(); i++) {
+
+                    JSONObject c = data.getJSONObject(i);
+
+                    map = new HashMap<String, String>();
+
+                    map.put("Month", c.getString("Month"));
+
+                    map.put("Description", c.getString("Description"));
+
+                    map.put("Year", c.getString("Year"));
+                    map.put("Day", c.getString("Day"));
+                    map.put("Subject", c.getString("Subject"));
+
+                    myArrList.add(map);
+
+                }
+
+                for (int i = 0; i < myArrList.size(); i++) {
+                    txtD = myArrList.get(i).get("Day").toString();
+                    txtY = myArrList.get(i).get("Year").toString();
+                    txtM = myArrList.get(i).get("Month").toString();
+                    txtTopic = myArrList.get(i).get("Subject").toString();
+                    txtContent = myArrList.get(i).get("Description").toString();
+
+                }
+
+            } catch (Exception e) {
+
+// TODO Auto-generated catch block
+                e.printStackTrace();
+
+            }
             ar = new JTextArea();
-            ar.setFont(new Font("Arial, sans-serif", Font.PLAIN,15));
+            ar.setFont(new Font("Arial, sans-serif", Font.PLAIN, 15));
             ar.setAutoscrolls(true);
             ar.setLineWrap(true);
             ar.setEnabled(true);
             ar.setEditable(true);
-            ar.setText(txt1+txt2+txt3+txt4+txt5+txt6);
+            ar.setText(txtTopic +"\n"+ "   " +txtD + txtY + txtM +"\n"+"   " +  txtContent);
             arrayTA.add(ar);
         }
-        
-        for(JTextArea ta: arrayTA){
+
+        for (JTextArea ta : arrayTA) {
             pnel.add(ta);
         }
-        
+
         btn.setBackground(Color.DARK_GRAY);
         btn.setForeground(Color.YELLOW);
         btn.setFocusPainted(false);
@@ -91,14 +137,36 @@ public class MainFrame {
         frm.add(jp, BorderLayout.CENTER);
         frm.setVisible(true);
         frm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
+
         btn.addMouseListener(new MouseAdapter() {
-           
+
         });
     }
-    
 
-//    public static void main(String[] args) {
-//        new MainFrame().draw();
-//    }
+    public void show() {
+        String sql_read = "SELECT * FROM addwork";
+        My_CNK db = new My_CNK();
+        ResultSet rs;
+        try {
+            Connection con = db.ConnectDataBase();
+            rs = con.createStatement().executeQuery(sql_read);
+            //สร้าง Statement แล้วเอาข้อมูลที่อ่านได้ยัดเข้า แล้วเก็บในตัวแปร rs
+//             while (rs.next()) {
+//                 num2++;
+//             }
+//             System.out.println(num2);
+//             rs = con.createStatement().executeQuery(sql_read);
+            while (rs.next()) { //รันข้อมูลไปเลื่อยๆจนข้อมูลหมด
+                txt = rs.getString(1);
+                arrayTXT.add(txt);
+                num++;                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(NewAdd.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void main(String[] args) {
+        new MainFrame().draw();
+    }
 }
