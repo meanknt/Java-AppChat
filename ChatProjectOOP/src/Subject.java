@@ -12,7 +12,6 @@ import userChat.ClientGUI;
  * @author kit
  */
 public class Subject extends javax.swing.JFrame {
-    private static String name = "Kit Kub";
     ClientGUI OOP = new ClientGUI(444, "Object Oriented Programming");
     ClientGUI WEB = new ClientGUI(555, "Web Technology");
     ClientGUI NW = new ClientGUI(666, "Network");
@@ -22,9 +21,17 @@ public class Subject extends javax.swing.JFrame {
     /**
      * Creates new form Subject
      */
+    
+    getdata n = new getdata();
+    public String name = n.Showdata();
+    
     public Subject() {
         initComponents();
     }
+    
+//    public Subject(String name){
+//        this.name = name;
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
