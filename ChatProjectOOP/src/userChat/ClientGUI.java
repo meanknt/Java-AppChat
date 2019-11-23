@@ -1,6 +1,5 @@
 package userChat;
 
-import static com.sun.tools.javac.code.TypeAnnotationPosition.field;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextAttribute;
@@ -174,9 +173,9 @@ public class ClientGUI extends Thread implements WindowListener {
         jfr.setVisible(true);
 
         try {
-            appendToPane(jtextFilDiscu, "Connecting to " + serverName + " on port " + PORT + "...");
             server = new Socket(serverName, PORT);//ip, port
-            appendToPane(jtextFilDiscu, "<span>Connected to " + server.getRemoteSocketAddress());
+                    appendToPane(jtextFilDiscu, "<span style='color:#752364;'><b>สามารถดูคำสั่งพิม !help</b></span>");
+                    appendToPane(jtextFilDiscu, "<span style='color:#752364;'><b>สามารถดูคำสั่งอิโมจิพิม emoji</b></span>");
             input = new BufferedReader(new InputStreamReader(server.getInputStream()));
             output = new PrintWriter(server.getOutputStream(), true);
             // send nickname to server
@@ -198,6 +197,8 @@ public class ClientGUI extends Thread implements WindowListener {
                     server = new Socket(serverName, PORT);//ip, port
                     appendToPane(jtextFilDiscu, "<span>Connected to "
                             + server.getRemoteSocketAddress());
+                    appendToPane(jtextFilDiscu, "<span style='color:#752364;'><b>สามารถดูคำสั่งพิม !help</b></span>");
+                    appendToPane(jtextFilDiscu, "<span style='color:#752364;'><b>สามารถดูคำสั่งอิโมจิพิม emoji</b></span>");
                     input = new BufferedReader(new InputStreamReader(server.getInputStream()));
                     output = new PrintWriter(server.getOutputStream(), true);
                     // send nickname to server
@@ -442,7 +443,7 @@ public class ClientGUI extends Thread implements WindowListener {
                             ListUser = new ArrayList<String>(Arrays.asList(message.split(", ")));
                             jtextListUsers.setText(null);
                             //List all user to JPane
-                            appendToPane(jtextListUsers, "&nbsp;<b style='color:green;'>Online</b>");
+                            appendToPane(jtextListUsers, "<span style='color: green;font-size:12px'>&emsp;&ensp;Online User</span>");
                             for (String user : ListUser) {
                                 appendToPane(jtextListUsers, "&nbsp;&nbsp;" + user);
                             }
